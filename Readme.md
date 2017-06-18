@@ -117,20 +117,26 @@ while True:
 ## Blocks - App Inventor
 
 Inicio da Aplicação 
+
 ![Image Code Block](inicio.png)
 
 Recebendo Informação do TinyWebDB - TAG sensor
+
 ![Image Code Block](sensor_tag.png)
 
 Criando gráfico no Canvas 
+
 ![Image Code Block](canvas.png)
 
 Atualizando Label com novo valor
+
 ![Image Code Block](troca.png)
 
 Recebendo Informação do TinyWebDB - TAG led
+
 ![Image Code Block](led.png)
 
 Ações dos Botões
+
 ![Image Code Block](botao.png)
 

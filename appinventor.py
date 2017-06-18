@@ -1,30 +1,35 @@
-import requests
+#Pacotes do Projeto
+import requests 
 import json
-import serial
+import serial #Pacote externo pyserial 
 import time
-from bs4 import BeautifulSoup
-from multiprocessing import Pool
+from bs4 import BeautifulSoup #Pacote externo BeautifulSoup
 
-comport = serial.Serial('/dev/ttyACM1',9600)
+#Setando variáveis
+comport = serial.Serial('<Porta Serial>',9600)
+# exemplo de portas serial /dev/ttyACM0 - Linux, COM01 - Windowns
 
+#Variáveis usadas 
 sensor = []
 led = ""
 i = 0
 
+#Método que modifica tags no TinyWebDB
 def modif(tag,value):
     url = 'http://qrtalk-1155.appspot.com/storeavalue'
     payload = {'tag': tag, 'value': value,'fmt':'html'}
     headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
- 
     r = requests.post(url, params=payload, headers=headers)
 
+#Método que recebe informações do TinyWebDB 
 def getvalue():
-    url = 'http://qrtalk-1155.appspot.com/getvalue'
+    url = 'http://qrtalk-1155.appspot.com//getvalue'
     payload = {'tag': 'led', 'fmt':'html'}
     headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
     r = requests.post(url, params=payload, headers=headers)
     return r.content
 
+#Método que filtra o HTML recebido do TinyWebDB
 def getHTML():
     soup = BeautifulSoup(getvalue(),"html.parser")
     isLed = False
@@ -36,22 +41,21 @@ def getHTML():
         else:
             isLed = False
     return led
-pool = Pool(processes=1)
+
+#Loop infinito
 while True:
-    time.sleep(0.5)
-    if i >= 10:
+    time.sleep(0.5) #Delay de meio segundo
+    if i >= 10: #Condição para envio dos dados para o TinyWebDB
         print(sensor)
         modif("sensor",str(sensor))
         sensor = []
         i = 0
         led = getHTML()
-    if led.replace('"', "") == "Apagar Luz":
-        print("hmmmmm")
+    if led.replace('"', "") == "Apagar Luz":#Condição para envio dos dados a Porta Serial
         comport.write('l'.encode())
     else:
-        print("tatatatat")
         comport.write('d'.encode())
-    tag = str(comport.readline())
+    tag = str(comport.readline())#Leitura da Porta Serial
     print(tag)
     if tag[0] == 's':
         sensor.append(int(tag[1:]))
